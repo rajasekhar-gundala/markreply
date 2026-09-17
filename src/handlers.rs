@@ -626,7 +626,7 @@ pub async fn serve_js() -> impl axum::response::IntoResponse {
                 <form id="mr-form" style="max-width: 36rem;">
                     <input type="hidden" id="mr-slug" value="${postSlug}">
                     <input type="hidden" id="mr-parent-id" value="">
-                    <input type="text" id="mr-honeypot" style="display:none" tabindex="-1" autocomplete="off">
+                    <input type="text" id="mr-honeypot" name="honeypot" style="opacity: 0; position: absolute; top: 0; left: -9999px; z-index: -1;" tabindex="-1" autocomplete="off">
 
                     <div id="mr-replying-to" style="display: none; font-size: 0.75rem; color: var(--mr-primary); font-weight: 600; margin-bottom: 1rem;">
                         Replying to comment... <button type="button" id="mr-cancel-reply" style="background:none;border:none;color:var(--mr-muted);cursor:pointer;text-decoration:underline;">Cancel</button>
