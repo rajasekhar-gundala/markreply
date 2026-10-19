@@ -46,26 +46,24 @@ jobs:
           ghcr.io/rajasekhar-gundala/markreply:latest
 
         echo "Waiting for markreply-dast to listen on http://localhost:3000..."
-        for i in $(seq 1 30); do
-          # 1. Check if the container crashed/exited early
+        for i in $(seq 1 15); do
           if [ "$(docker inspect -f '{{.State.Running}}' markreply-dast)" != "true" ]; then
-            echo "❌ Container markreply-dast exited unexpectedly! Container logs:"
+            echo "❌ Container exited unexpectedly. Logs:"
             docker logs markreply-dast
             exit 1
           fi
 
-          # 2. Check if port 3000 is responding
           if curl -sSf http://localhost:3000 > /dev/null 2>&1; then
-            echo "✅ markreply-dast is up and responding on http://localhost:3000!"
-            docker logs markreply-dast
+            echo "✅ Server is up on port 3000!"
             exit 0
           fi
           sleep 1
         done
 
-        echo "❌ Timed out waiting for http://localhost:3000. Container logs & open ports:"
+        echo "❌ Timeout reached! Printing container logs:"
         docker logs markreply-dast
-        ss -tulpn || true
+        echo "Printing listening ports inside runner:"
+        ss -tulpn || netstat -an || true
         exit 1
 
     - name: OWASP ZAP Baseline Scan
