@@ -22,7 +22,8 @@ FROM cgr.dev/chainguard/wolfi-base:latest
 WORKDIR /app
 
 # Install runtime dependencies using Wolfi's package manager
-RUN apk add --no-cache sqlite ca-certificates openssl
+# Note: wolfi uses 'libssl3' (or 'openssl') for SSL libraries, and 'sqlite' for sqlite3
+RUN apk update && apk add --no-cache ca-certificates sqlite libssl3 openssl
 
 # Copy the compiled binary and migrations from the builder
 COPY --from=builder /usr/src/app/target/release/comment-service ./

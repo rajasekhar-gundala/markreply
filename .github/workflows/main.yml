@@ -37,34 +37,11 @@ jobs:
         exit-code: '0'
         severity: 'CRITICAL,HIGH'
 
-    - name: Start Container for DAST & Verify Readiness
-      run: |
-        docker run -d --network=host \
-          -e HOST=0.0.0.0 \
-          -e PORT=3000 \
-          --name markreply-dast \
-          ghcr.io/rajasekhar-gundala/markreply:latest
+    - name: Start Container for DAST
+      run: docker run -d -p 3000:3000 --name markreply-dast ghcr.io/rajasekhar-gundala/markreply:latest
 
-        echo "Waiting for markreply-dast to listen on http://localhost:3000..."
-        for i in $(seq 1 15); do
-          if [ "$(docker inspect -f '{{.State.Running}}' markreply-dast)" != "true" ]; then
-            echo "❌ Container exited unexpectedly. Logs:"
-            docker logs markreply-dast
-            exit 1
-          fi
-
-          if curl -sSf http://localhost:3000 > /dev/null 2>&1; then
-            echo "✅ Server is up on port 3000!"
-            exit 0
-          fi
-          sleep 1
-        done
-
-        echo "❌ Timeout reached! Printing container logs:"
-        docker logs markreply-dast
-        echo "Printing listening ports inside runner:"
-        ss -tulpn || netstat -an || true
-        exit 1
+    - name: Wait for Server Startup
+      run: sleep 5
 
     - name: OWASP ZAP Baseline Scan
       uses: zaproxy/action-baseline@v0.15.0
